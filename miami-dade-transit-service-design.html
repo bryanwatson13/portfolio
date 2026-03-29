@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Miami-Dade Transit Store — Service Design Case Study</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f0e0d;
+    --paper: #f5f2ec;
+    --accent: #e8521a;
+    --accent2: #1a4de8;
+    --mid: #6b6560;
+    --rule: #d4cfc7;
+    --highlight: #fff8e7;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { background:var(--paper); color:var(--ink); font-family:'DM Sans',sans-serif; font-weight:300; font-size:17px; line-height:1.7; overflow-x:hidden; }
+
+  nav { position:fixed; top:0; left:0; right:0; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:18px 48px; background:var(--paper); border-bottom:1px solid var(--rule); }
+  nav .logo { font-family:'Playfair Display',serif; font-weight:700; font-size:15px; letter-spacing:.06em; text-transform:uppercase; }
+  nav .byline { font-size:12px; color:var(--mid); letter-spacing:.08em; text-transform:uppercase; }
+
+  .hero { min-height:100vh; display:grid; grid-template-columns:1fr 1fr; padding-top:70px; }
+  .hero-left { padding:80px 64px 80px 80px; display:flex; flex-direction:column; justify-content:center; border-right:1px solid var(--rule); }
+  .hero-tag { font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--accent); margin-bottom:32px; display:flex; align-items:center; gap:10px; }
+  .hero-tag::before { content:''; display:block; width:32px; height:1px; background:var(--accent); }
+  .hero h1 { font-family:'Playfair Display',serif; font-size:clamp(40px,5vw,68px); line-height:1.05; font-weight:900; margin-bottom:12px; }
+  .hero h1 em { font-style:italic; color:var(--accent); }
+  .hero-sub { font-size:20px; color:var(--mid); font-family:'Playfair Display',serif; font-style:italic; margin-bottom:48px; border-left:3px solid var(--accent2); padding-left:16px; }
+  .hero-meta { display:flex; gap:40px; flex-wrap:wrap; }
+  .hero-meta-item label { display:block; font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:var(--mid); margin-bottom:4px; }
+  .hero-meta-item span { font-weight:500; font-size:15px; }
+  .hero-right { display:grid; grid-template-rows:1fr 1fr; background:var(--ink); }
+  .hero-stat { display:flex; flex-direction:column; justify-content:center; padding:48px 64px; border-bottom:1px solid rgba(255,255,255,.1); color:white; }
+  .hero-stat .big { font-family:'Playfair Display',serif; font-size:72px; font-weight:900; line-height:1; color:var(--accent); }
+  .hero-stat p { font-size:15px; color:rgba(255,255,255,.6); margin-top:8px; }
+
+  section { padding:96px 80px; border-bottom:1px solid var(--rule); }
+  .section-label { font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:var(--accent); margin-bottom:20px; display:flex; align-items:center; gap:10px; }
+  .section-label::after { content:''; flex:1; height:1px; background:var(--rule); max-width:80px; }
+  h2 { font-family:'Playfair Display',serif; font-size:clamp(30px,4vw,50px); font-weight:700; line-height:1.1; margin-bottom:32px; }
+  h3 { font-family:'Playfair Display',serif; font-size:24px; font-weight:700; margin-bottom:14px; margin-top:44px; }
+  h3:first-of-type { margin-top:0; }
+  p { margin-bottom:18px; color:#2a2825; }
+  p:last-child { margin-bottom:0; }
+  .two-col { display:grid; grid-template-columns:1fr 1fr; gap:64px; align-items:start; }
+  .three-col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:40px; }
+
+  .pull-quote { margin:48px 0; padding:40px 48px; background:var(--ink); color:white; position:relative; }
+  .pull-quote::before { content:'\201C'; font-family:'Playfair Display',serif; font-size:120px; line-height:.7; color:var(--accent); opacity:.6; position:absolute; top:24px; left:32px; }
+  .pull-quote p { font-family:'Playfair Display',serif; font-size:22px; font-style:italic; color:white; padding-left:24px; position:relative; z-index:1; }
+
+  .eco-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--rule); margin:48px 0; }
+  .eco-node { background:var(--paper); padding:28px 24px; }
+  .eco-node.center { background:var(--accent); color:white; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; min-height:160px; }
+  .eco-node.center h4 { color:white; font-size:20px; }
+  .eco-node.center p { color:rgba(255,255,255,.8); font-size:13px; }
+  .eco-node-type { font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:var(--mid); margin-bottom:8px; }
+  .eco-node h4 { font-weight:500; font-size:15px; margin-bottom:6px; }
+  .eco-node p { font-size:12px; color:var(--mid); margin:0; line-height:1.5; }
+
+  .journey-phases { display:flex; gap:0; margin:48px 0; border-top:1px solid var(--rule); border-bottom:1px solid var(--rule); }
+  .phase { flex:1; padding:28px 20px; border-right:1px solid var(--rule); border-top:4px solid var(--ink); }
+  .phase:last-child { border-right:none; }
+  .phase.active { border-top-color:var(--accent); background:var(--highlight); }
+  .phase-label { font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:var(--mid); margin-bottom:8px; }
+  .phase-name { font-weight:500; font-size:15px; margin-bottom:12px; }
+  .phase ul { padding-left:16px; font-size:13px; color:#3a3734; line-height:1.6; }
+  .phase .ch { font-size:11px; color:var(--mid); margin-top:12px; }
+  .phase .fp { font-size:11px; color:var(--accent); margin-top:4px; }
+
+  .blueprint { margin:48px 0; overflow-x:auto; }
+  .bp-table { width:100%; border-collapse:collapse; min-width:900px; }
+  .bp-table th { background:var(--ink); color:white; font-size:11px; letter-spacing:.14em; text-transform:uppercase; padding:14px 16px; text-align:left; font-weight:400; }
+  .bp-table th:first-child { background:var(--accent); }
+  .bp-table td { padding:14px 16px; font-size:13px; border-bottom:1px solid var(--rule); border-right:1px solid var(--rule); vertical-align:top; line-height:1.5; }
+  .bp-table td:first-child { font-size:10px; letter-spacing:.12em; text-transform:uppercase; font-weight:500; color:var(--mid); background:#f0ece4; width:130px; }
+  .bp-table tr:last-child td { border-bottom:none; }
+  .bp-table .hl { background:#fff8e7; }
+  .bp-row-front td:first-child { border-left:4px solid var(--accent); }
+  .bp-row-back td:first-child { border-left:4px solid var(--accent2); }
+  .bp-row-support td:first-child { border-left:4px solid #999; }
+  .bp-row-evidence td:first-child { border-left:4px solid #22aa66; }
+
+  .insight-cards { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1px; background:var(--rule); margin:48px 0; }
+  .insight-card { background:var(--paper); padding:32px 28px; }
+  .insight-num { font-family:'Playfair Display',serif; font-size:48px; font-weight:900; color:var(--rule); line-height:1; margin-bottom:8px; }
+  .insight-card h4 { font-weight:500; font-size:16px; margin-bottom:8px; }
+  .insight-card p { font-size:14px; color:var(--mid); margin:0; }
+
+  .opp-grid { display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--rule); margin:48px 0; }
+  .opp-card { background:var(--paper); padding:40px; }
+  .opp-card:nth-child(odd) { background:var(--ink); color:white; }
+  .opp-card:nth-child(odd) p { color:rgba(255,255,255,.65); }
+  .opp-card:nth-child(odd) h4 { color:white; }
+  .opp-tag { font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:var(--accent); margin-bottom:16px; }
+  .opp-card:nth-child(odd) .opp-tag { color:#f98d65; }
+  .opp-card h4 { font-weight:500; font-size:18px; margin-bottom:10px; }
+  .opp-card p { font-size:14px; line-height:1.6; margin:0; }
+
+  .metrics { display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid var(--rule); border-bottom:1px solid var(--rule); margin:48px 0; }
+  .metric { padding:48px 36px; border-right:1px solid var(--rule); }
+  .metric:last-child { border-right:none; }
+  .metric .num { font-family:'Playfair Display',serif; font-size:52px; font-weight:900; line-height:1; color:var(--accent); margin-bottom:8px; }
+  .metric .lbl { font-size:13px; color:var(--mid); line-height:1.4; }
+
+  .stat-row { display:flex; gap:0; margin:48px 0; border:1px solid var(--rule); }
+  .stat-box { flex:1; padding:36px 28px; border-right:1px solid var(--rule); text-align:center; }
+  .stat-box:last-child { border-right:none; }
+  .stat-box .n { font-family:'Playfair Display',serif; font-size:44px; font-weight:900; color:var(--accent); line-height:1; }
+  .stat-box .d { font-size:13px; color:var(--mid); margin-top:6px; }
+
+  .learnings { display:grid; grid-template-columns:1fr 1fr; gap:48px; margin-top:48px; }
+  .learning { padding-left:20px; border-left:3px solid var(--accent); }
+  .learning h4 { font-weight:500; margin-bottom:8px; }
+  .learning p { font-size:14px; color:var(--mid); margin:0; }
+
+  footer { padding:48px 80px; display:flex; align-items:center; justify-content:space-between; border-top:1px solid var(--rule); background:var(--ink); color:white; }
+  footer .name { font-family:'Playfair Display',serif; font-size:24px; font-weight:700; }
+  footer p { font-size:13px; color:rgba(255,255,255,.5); margin:4px 0 0; }
+  footer .role { font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Bryan Watson</div>
+  <div class="byline">Service Design Case Study · Miami-Dade County Transit Store</div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-left">
+    <div class="hero-tag">Service Design Case Study</div>
+    <h1>Miami-Dade<br>County<br><em>Transit</em><br>Store</h1>
+    <p class="hero-sub">Redesigning a government transit service so that the riders who depend on it can actually use it.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><label>Role</label><span>UX/UI Designer & Researcher</span></div>
+      <div class="hero-meta-item"><label>Client</label><span>Miami-Dade County Transit</span></div>
+      <div class="hero-meta-item"><label>Framework</label><span>Learn · Define · Design · Experiment</span></div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-stat">
+      <div class="big">40%</div>
+      <p>of transit riders surveyed didn't know the online Transit Store existed — a service that was failing not through bad design alone, but through invisibility</p>
+    </div>
+    <div class="hero-stat">
+      <div class="big">30+</div>
+      <p>transit websites audited across New York, Boston, Berlin, Tokyo, Disney, SunPass, and Visa Prepaid to establish service benchmarks for the redesign</p>
+    </div>
+  </div>
+</div>
+
+<!-- 1. SERVICE CHALLENGE -->
+<section>
+  <div class="section-label">01 — Service Challenge</div>
+  <div class="two-col">
+    <div>
+      <h2>A public service that its own riders couldn't access</h2>
+      <p>The Miami-Dade County Transit Store is a government-operated digital service that allows riders to purchase Easy Cards, reload transit passes, register Parking Permits, and manage their transit accounts. Despite serving a daily transit ridership of hundreds of thousands, the site was barely being used.</p>
+      <p>Consumers were not utilizing the website to learn about or purchase these products — and transit ridership in Miami had declined 25% since 2019, with bus route cuts, ghost buses, and schedule unreliability already eroding trust in the system itself.</p>
+    </div>
+    <div>
+      <h3>From website redesign to public service question</h3>
+      <p>The Transit Store isn't a retail site competing for discretionary spending. It's a critical access point for a public infrastructure service. When it fails, riders can't reload their cards conveniently, can't buy permits online, and must go to physical kiosks — even if they don't ride the train. The service design question is: <strong>how do we design a digital channel that earns the trust of riders who already distrust the transit system, and makes managing transit genuinely easier than going to the kiosk?</strong></p>
+      <div class="pull-quote" style="margin-top:32px;">
+        <p>People aren't buying Easy Passes online because they don't want to deal with this. The website doesn't work — and neither, sometimes, does the transit.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. SERVICE ECOSYSTEM -->
+<section>
+  <div class="section-label">02 — Service Ecosystem</div>
+  <h2>A complex public service with many actors</h2>
+  <p>The Transit Store sits at the intersection of a government agency, physical infrastructure, multiple fare products, and a diverse ridership. Mapping these relationships reveals why the digital channel can't be fixed in isolation.</p>
+  <div class="eco-grid">
+    <div class="eco-node">
+      <div class="eco-node-type">Primary User</div>
+      <h4>Transit Rider</h4>
+      <p>Daily bus and rail commuters, park-and-ride users. Diverse demographics — many with long commutes, limited time, and existing frustration with system reliability. 75% use the Easy Card system; 85% reload at the station.</p>
+    </div>
+    <div class="eco-node">
+      <div class="eco-node-type">Government Agency</div>
+      <h4>Miami-Dade County Transit (MDT)</h4>
+      <p>Operator of the bus, Metrorail, and Metromover systems. Stakeholder in ridership growth, fare collection, and site performance (tracked via Google Analytics).</p>
+    </div>
+    <div class="eco-node">
+      <div class="eco-node-type">Fare Product</div>
+      <h4>Easy Card</h4>
+      <p>A reloadable transit card used for bus, rail, and Metromover. Also unlocks discounts at local restaurants and events. Can be purchased and reloaded online or at station kiosks.</p>
+    </div>
+    <div class="eco-node">
+      <div class="eco-node-type">Fare Product</div>
+      <h4>Parking Permit</h4>
+      <p>Digital permit allowing riders to park at park-and-ride lots near train stations. $40/day without a permit at Brickell. High-value product with a confusing online purchase path.</p>
+    </div>
+    <div class="eco-node center">
+      <h4>The Transit Store</h4>
+      <p>Digital service channel for Easy Cards, Parking Permits & merchandise</p>
+    </div>
+    <div class="eco-node">
+      <div class="eco-node-type">Competing Channel</div>
+      <h4>Station Kiosk</h4>
+      <p>The default card reload point for 85% of riders. Perceived as more reliable than the website. The Transit Store must out-convenient the kiosk to win adoption.</p>
+    </div>
+    <div class="eco-node">
+      <div class="eco-node-type">Secondary Need</div>
+      <h4>Merchandise</h4>
+      <p>60% of surveyed riders expressed interest in purchasing MDT-branded merchandise — an untapped revenue stream not previously offered through the digital channel.</p>
+    </div>
+    <div class="eco-node">
+      <div class="eco-node-type">Best-in-Class Reference</div>
+      <h4>NY/Boston/Tokyo Transit + Disney/SunPass</h4>
+      <p>Benchmarked for clear CTAs, iconographic product representation, guided checkouts, and reloadable card UX. Over 30 sites analyzed.</p>
+    </div>
+    <div class="eco-node">
+      <div class="eco-node-type">Support</div>
+      <h4>Customer Service & Language Access</h4>
+      <p>Miami's multilingual population requires the service to work in multiple languages — a positive from the existing site that must be preserved in the redesign.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 3. RESEARCH -->
+<section>
+  <div class="section-label">03 — Research & Discovery</div>
+  <div class="two-col">
+    <div>
+      <h2>Listening to riders who had given up on the service</h2>
+      <p>Research combined a UX audit of the existing site, a 30+ site competitive audit, social media and community listening, a 40+ response Google survey of current riders, and over 20 one-on-one user interviews. The sticky note wall from the research synthesis captures the density of insight gathered — rider frustrations, data on transit decline, behavioral patterns, and opportunity areas all in one view.</p>
+    </div>
+    <div>
+      <div class="stat-row" style="margin-top:0;">
+        <div class="stat-box"><div class="n">75%</div><div class="d">of riders use the Easy Card system — the core service product</div></div>
+        <div class="stat-box"><div class="n">85%</div><div class="d">reload at the station kiosk rather than online — the digital channel is losing</div></div>
+      </div>
+      <div class="stat-row" style="margin-top:1px;">
+        <div class="stat-box"><div class="n">40%</div><div class="d">didn't know the Transit Store website existed at all</div></div>
+        <div class="stat-box"><div class="n">60%</div><div class="d">are interested in purchasing merchandise — an unmet demand</div></div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Three rider personas with distinct service needs</h3>
+  <div class="insight-cards">
+    <div class="insight-card">
+      <div class="insight-num">01</div>
+      <h4>The Daily Commuter</h4>
+      <p>25-year-old part-time worker, married, bus-dependent for work and school. Needs to reload quickly without going to the station. Can't check card balance without logging in. Values speed and convenience above all else.</p>
+    </div>
+    <div class="insight-card">
+      <div class="insight-num">02</div>
+      <h4>The Park-and-Ride Driver</h4>
+      <p>Matt, 36, accountant in downtown Miami. Pays $40/day to park near work — transit is a financial no-brainer but the parking permit process is opaque and frustrating online. Wants a streamlined digital path to manage his permit.</p>
+    </div>
+    <div class="insight-card">
+      <div class="insight-num">03</div>
+      <h4>The Occasional Visitor</h4>
+      <p>New or infrequent transit user who needs orientation — what is an Easy Card, how does it work, what are the benefits? The existing site provides no onboarding. A first-time visitor has no idea what to do or why they should.</p>
+    </div>
+  </div>
+
+  <h3>What the UX audit revealed about the existing service</h3>
+  <div class="two-col" style="margin-top:24px;">
+    <div>
+      <p><strong>Positives to preserve:</strong> The existing site had genuine strengths — multiple language support (critical for Miami's diverse population), good copywriting, and engaging imagery. These were anchors for the redesign, not things to throw away.</p>
+      <p><strong>Navigation failure:</strong> Redundant navigation links with no clear hierarchy. Users reported not knowing where they were on the site at any point, with links that didn't indicate active state or logical relationship.</p>
+    </div>
+    <div>
+      <p><strong>No clear path:</strong> The site offered no guided route from arrival to purchase. A rider who wanted to buy a Parking Permit encountered a broken link that sent them to the License Account page — requiring separate account creation before any transaction could happen.</p>
+      <p><strong>No CTAs and no orientation:</strong> The homepage had no clear calls to action distinguishing Easy Card from Parking Permit from Reload. First-time visitors had no indication of what to do or where to start — the service provided no welcome.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 4. CUSTOMER JOURNEY -->
+<section style="padding-left:0; padding-right:0;">
+  <div style="padding:0 80px;">
+    <div class="section-label">04 — Customer Journey</div>
+    <h2>Five stages of a service the city depends on</h2>
+    <p>Unlike commercial services, riders don't choose Miami-Dade transit out of preference — they depend on it. That dependency makes the service design stakes higher: every failure isn't just a lost sale, it's a rider left without convenient access to a public good.</p>
+  </div>
+  <div class="journey-phases">
+    <div class="phase">
+      <div class="phase-label">Phase 1</div>
+      <div class="phase-name">Awareness</div>
+      <ul>
+        <li>Rider hears about site (word of mouth, or not at all)</li>
+        <li>40% never discover it exists</li>
+        <li>No marketing or onboarding for new riders</li>
+      </ul>
+      <div class="ch">Channel: None / Word of mouth</div>
+      <div class="fp">★ Most riders never reach this point</div>
+    </div>
+    <div class="phase active">
+      <div class="phase-label">Phase 2</div>
+      <div class="phase-name">Arrive & Orient</div>
+      <ul>
+        <li>Reaches homepage</li>
+        <li>No clear path presented</li>
+        <li>Can't distinguish products</li>
+        <li>No CTAs, no orientation</li>
+      </ul>
+      <div class="ch">Channel: Website</div>
+      <div class="fp">★ Failure #1 — Homepage provides no direction</div>
+    </div>
+    <div class="phase active">
+      <div class="phase-label">Phase 3</div>
+      <div class="phase-name">Navigate & Find</div>
+      <ul>
+        <li>Clicks into redundant nav</li>
+        <li>Broken links encountered</li>
+        <li>Forced account creation before browsing</li>
+        <li>"The website is a challenge"</li>
+      </ul>
+      <div class="ch">Channel: Website</div>
+      <div class="fp">★ Failure #2 — Navigation creates dead ends</div>
+    </div>
+    <div class="phase active">
+      <div class="phase-label">Phase 4</div>
+      <div class="phase-name">Purchase</div>
+      <ul>
+        <li>Multi-step checkout with account creation required</li>
+        <li>No easy pay options</li>
+        <li>Kiosk feels easier by comparison</li>
+        <li>Many abandon to station kiosk</li>
+      </ul>
+      <div class="ch">Channel: Website / Kiosk</div>
+      <div class="fp">★ Failure #3 — Checkout drives riders to kiosk</div>
+    </div>
+    <div class="phase">
+      <div class="phase-label">Phase 5</div>
+      <div class="phase-name">Manage Account</div>
+      <ul>
+        <li>Balance check requires login</li>
+        <li>No notification for low balance</li>
+        <li>License plate management buried</li>
+        <li>No incentive to return to site</li>
+      </ul>
+      <div class="ch">Channel: Website (logged in)</div>
+      <div style="font-size:11px; color:var(--mid); margin-top:4px;">Retention opportunity missed</div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. BLUEPRINT -->
+<section>
+  <div class="section-label">05 — Service Blueprint</div>
+  <h2>The full operational system behind the transit service</h2>
+  <p>The blueprint maps the frontstage rider experience against the backstage agency operations, payment systems, and physical infrastructure. It makes visible why a broken website creates cascading failures across the entire transit service.</p>
+  <div style="display:flex; gap:32px; margin:32px 0; flex-wrap:wrap;">
+    <div style="display:flex; align-items:center; gap:10px; font-size:13px;"><div style="width:20px; height:4px; background:var(--accent);"></div>Frontstage (rider-visible)</div>
+    <div style="display:flex; align-items:center; gap:10px; font-size:13px;"><div style="width:20px; height:4px; background:var(--accent2);"></div>Backstage (agency operations)</div>
+    <div style="display:flex; align-items:center; gap:10px; font-size:13px;"><div style="width:20px; height:4px; background:#999;"></div>Support systems</div>
+    <div style="display:flex; align-items:center; gap:10px; font-size:13px;"><div style="width:20px; height:4px; background:#22aa66;"></div>Physical evidence</div>
+  </div>
+  <div class="blueprint">
+    <table class="bp-table">
+      <thead>
+        <tr>
+          <th>Layer</th>
+          <th>Awareness</th>
+          <th>Arrive & Orient</th>
+          <th>Navigate & Find</th>
+          <th>Purchase</th>
+          <th>Account Management</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="bp-row-evidence">
+          <td>Physical Evidence</td>
+          <td>Bus signage (if any), fellow rider recommendations, MDT app</td>
+          <td>Homepage — no CTA hierarchy, no product iconography</td>
+          <td>Nav menu, product pages, broken links</td>
+          <td>Checkout form, payment screen, confirmation email</td>
+          <td>Dashboard, card balance display, transaction history</td>
+        </tr>
+        <tr class="bp-row-front">
+          <td>Rider Actions</td>
+          <td>Searches for transit card options; hears about site (or doesn't)</td>
+          <td>Arrives on homepage; attempts to understand what the site does</td>
+          <td>Clicks nav options; follows broken links; gets frustrated</td>
+          <td>Attempts to buy Easy Card or Parking Permit; enters account info</td>
+          <td>Logs in to check balance or renew permit; manages license plate</td>
+        </tr>
+        <tr class="bp-row-front">
+          <td>Frontstage (Digital)</td>
+          <td>Site has no discovery path; no onboarding for new transit users</td>
+          <td>Homepage shows product images but no clear CTAs or iconographic distinction between products</td>
+          <td>Redundant nav with no active state; broken link on "Link License" sends user backward; account creation required before purchase</td>
+          <td>Multi-step checkout (5 steps); no Apple Pay/PayPal; no guest checkout; "EASY Card number" field format unclear</td>
+          <td>Balance only accessible post-login; no low-balance notifications; parking permit managed separately from transit account</td>
+        </tr>
+        <tr>
+          <td colspan="6" style="padding:6px 16px; background:#e8f0ff; font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--accent2); border-bottom:2px solid var(--accent2);">— Line of Visibility —</td>
+        </tr>
+        <tr class="bp-row-back">
+          <td>Backstage (MDT)</td>
+          <td>No digital marketing or rider communication about Transit Store; onboarding information not integrated with Metrocard signup</td>
+          <td>Homepage content managed manually; no CMS templating for product pages; style inconsistencies reflect multiple update cycles</td>
+          <td>Navigation built on legacy IA; product links not maintained; license plate registration stored in separate system</td>
+          <td>Checkout built on government procurement platform with limited modern payment support; account creation mandatory for compliance reasons</td>
+          <td>Balance data from separate card management system; not surfaced without authentication; renewal reminders not automated</td>
+        </tr>
+        <tr>
+          <td colspan="6" style="padding:6px 16px; background:#f0ece4; font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:#999; border-bottom:2px solid #999;">— Line of Internal Interaction —</td>
+        </tr>
+        <tr class="bp-row-support">
+          <td>Support Systems</td>
+          <td>No CRM or email marketing; no rider onboarding program tied to card registration</td>
+          <td>CMS lacks product iconography templates; style guide not enforced; no UX ownership across site sections</td>
+          <td>Multiple backend systems (Easy Card, Parking, Merchandise) not unified under single IA; link maintenance ad hoc</td>
+          <td>Government payment gateway; Visa/MC processing only; no wallet API integration; compliance requirements limit checkout streamlining</td>
+          <td>Easy Card balance system, parking permit database, and customer profile stored in separate silos; no unified account view</td>
+        </tr>
+        <tr class="bp-row-support">
+          <td>Failure Points</td>
+          <td class="hl">40% of riders don't know the site exists — the service has no discovery mechanism</td>
+          <td class="hl">Rider can't determine what product they need or where to start; abandons to kiosk or customer service</td>
+          <td class="hl">Broken links destroy trust; forced account creation before purchase is a conversion killer</td>
+          <td class="hl">5-step checkout is longer than kiosk reload; no modern payment options make kiosk seem faster and easier</td>
+          <td class="hl">No proactive account management drives reactive behavior (only visiting when card is empty, not before)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 6. OPPORTUNITY AREAS -->
+<section style="padding:0;">
+  <div style="padding:96px 80px 48px;">
+    <div class="section-label">06 — Service Opportunity Areas</div>
+    <h2>Where the public transit service can be rebuilt</h2>
+    <p>The UX strategy — Clear, Convincing, Modern — maps directly to service design principles. Each pillar addresses a specific layer of the service failure uncovered in research.</p>
+  </div>
+  <div class="opp-grid">
+    <div class="opp-card">
+      <div class="opp-tag">Discovery & Awareness</div>
+      <h4>A service riders can find before they need it</h4>
+      <p>40% awareness is a service design failure, not a marketing failure. Integrating Transit Store awareness into the Easy Card registration process, station kiosk screens, and MDT app onboarding turns the digital channel from a hidden option into a default one. Future iterations should include onboarding screens for first-time visitors who arrive directly.</p>
+    </div>
+    <div class="opp-card">
+      <div class="opp-tag">Homepage & Navigation</div>
+      <h4>Clear product iconography as service wayfinding</h4>
+      <p>Easy Cards, Parking Permits, and Merchandise are three distinct products with distinct purchase paths. Iconographic distinction on the homepage — borrowed from best-in-class transit systems like Tokyo and Boston — lets riders self-select their path immediately, without reading copy. Navigation should shrink to the essential three, not expand.</p>
+    </div>
+    <div class="opp-card">
+      <div class="opp-tag">Checkout & Trust</div>
+      <h4>Competing with the kiosk on convenience</h4>
+      <p>The station kiosk reload is the benchmark the digital service must beat. A streamlined checkout (progress bar, fewer steps, pre-filled account details for returning riders) combined with Apple Pay and Google Pay support makes online reload faster and more convenient than going to the station — the only argument that will shift rider behavior.</p>
+    </div>
+    <div class="opp-card">
+      <div class="opp-tag">Account & Retention</div>
+      <h4>Proactive card management as a service benefit</h4>
+      <p>Low-balance notifications, auto-reload options, and balance checking without login transform the Transit Store from a one-time transaction site into an ongoing service relationship. The Easy Card's discount benefit (local restaurants, shopping, events) is an underutilized loyalty hook that the site should actively surface.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 7. DESIGN DECISIONS -->
+<section>
+  <div class="section-label">07 — Design Decisions Through a Service Lens</div>
+  <h2>Clear · Convincing · Modern — as service design principles</h2>
+  <div class="three-col" style="margin-top:48px;">
+    <div>
+      <div style="font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--accent); margin-bottom:12px;">Clear</div>
+      <h3 style="font-size:20px; margin-top:0;">Product iconography on the homepage</h3>
+      <p style="font-size:14px;">Three distinct product categories — Easy Cards, Parking Permits, Shop — represented by icons on the homepage acts as service wayfinding. Riders don't have to read or interpret; they see and click. This decision was informed by best-in-class transit sites and by interview data showing riders arrived confused about what the site even offered.</p>
+    </div>
+    <div>
+      <div style="font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--accent); margin-bottom:12px;">Convincing</div>
+      <h3 style="font-size:20px; margin-top:0;">Benefits accessible from the homepage</h3>
+      <p style="font-size:14px;">Survey data showed riders appreciate the Easy Card discount benefits (restaurants, events, shopping) but don't actively know about them. Surfacing benefits from the homepage is a service design decision: it answers the implicit rider question "why should I use this site?" before they have to ask it. Trust is built before a transaction is requested.</p>
+    </div>
+    <div>
+      <div style="font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--accent); margin-bottom:12px;">Modern</div>
+      <h3 style="font-size:20px; margin-top:0;">A visual style users called "very Miami"</h3>
+      <p style="font-size:14px;">The style guide — hot pink CTAs, dark navy backgrounds, clean iconography — was tested with over 15 users and described as feeling "very Miami." This isn't vanity design. A government site that feels modern and alive signals to riders that the service is maintained, active, and trustworthy — directly countering the trust deficit created by years of broken links and 25% ridership decline.</p>
+    </div>
+  </div>
+
+  <div style="border-top:1px solid var(--rule); margin-top:48px; padding-top:40px;">
+    <h3>The current vs. proposed user flow as a service design argument</h3>
+    <p>The most concrete service design artifact in this project was the comparison between the current and proposed user flows for purchasing a Parking Permit. The current flow required: Homepage → Account? → Click Login → Login Page → Sign In → Dashboard → Link Broken → Link License → License Account Page → Add New → License Page → Manage License. Twelve steps, a broken link, and account creation before any product could be purchased.</p>
+    <p>The proposed flow: Homepage → Click Buy → Parking Permit PDP → Click Buy → Checkout (name, license number, easy pass number, payment info, create account) → Confirmation. Five steps, product-first, account creation deferred to checkout. The new sitemap reduced navigation options and made purchasing available directly from sub-menus — a structural service improvement, not a visual one.</p>
+  </div>
+</section>
+
+<!-- 8. OUTCOMES -->
+<section style="padding-left:0; padding-right:0; padding-bottom:0;">
+  <div style="padding:0 80px 48px;">
+    <div class="section-label">08 — Outcomes & Service Impact</div>
+    <h2>Measured results across the service system</h2>
+  </div>
+  <div class="metrics">
+    <div class="metric">
+      <div class="num">↑</div>
+      <div class="lbl">Sales of Easy Cards and Parking Permits increased according to MDT stakeholders post-launch</div>
+    </div>
+    <div class="metric">
+      <div class="num">↑</div>
+      <div class="lbl">User experience satisfaction improved in post-launch surveys</div>
+    </div>
+    <div class="metric">
+      <div class="num">↑</div>
+      <div class="lbl">Site utilization increased per Google Analytics — more riders using the digital channel</div>
+    </div>
+    <div class="metric">
+      <div class="num">15+</div>
+      <div class="lbl">People tested wireframes during development; only color and transition errors found in final prototype testing</div>
+    </div>
+  </div>
+</section>
+
+<!-- 9. REFLECTIONS -->
+<section>
+  <div class="section-label">09 — Service Design Reflections</div>
+  <h2>What public sector service design demands</h2>
+  <div class="learnings">
+    <div class="learning">
+      <h4>Government services carry a trust deficit that design must address</h4>
+      <p>Riders didn't avoid the Transit Store because the website was ugly — they avoided it because Miami-Dade Transit had lost their trust through route cuts, ghost buses, and schedule failures. The visual strategy ("very Miami," modern iconography) was a service trust signal, not decoration. Design that feels current tells riders the agency is paying attention.</p>
+    </div>
+    <div class="learning">
+      <h4>Competing with kiosk behavior requires beating it on convenience</h4>
+      <p>85% of riders reload at the station kiosk, even when they don't take the train. The kiosk is their mental default. The only way to change that behavior is to make the digital service provably faster and more convenient — not just available. The streamlined checkout, auto-reload, and balance notifications are the service design levers that make that case.</p>
+    </div>
+    <div class="learning">
+      <h4>Unmet demand can be the most surprising research finding</h4>
+      <p>The biggest fear going into this project was that riders didn't want to use the site — that the reputation problem was too deep. The survey revealed the opposite: riders want to use it, but the site doesn't work. That reframe — from "convince reluctant users" to "remove barriers for willing ones" — changed the entire design strategy.</p>
+    </div>
+    <div class="learning">
+      <h4>Competing CTAs on a homepage are a service architecture problem</h4>
+      <p>The concern that Easy Cards, Parking Permits, and Merchandise would create competing CTAs on the homepage turned out to be solvable through iconographic hierarchy rather than simplification. Service design teaches that multiple distinct products can coexist if each has a clear visual pathway — the three-column homepage structure answered this without removing any product.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div>
+    <div class="name">Bryan Watson</div>
+    <p class="role">UX/UI Product Designer & Researcher</p>
+    <p>Service Design Case Study · Miami-Dade County Transit Store</p>
+  </div>
+  <div style="text-align:right;">
+    <p style="font-size:12px; color:rgba(255,255,255,.4); text-transform:uppercase; letter-spacing:.1em;">Also in portfolio</p>
+    <p style="font-size:14px; color:rgba(255,255,255,.7); margin-top:6px;">Buy With Prime · Gauntlet Comic Books<br>Amazon Encompass · Been There · Meta Flex Sim</p>
+  </div>
+</footer>
+</body>
+</html>

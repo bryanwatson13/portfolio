@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gauntlet Comic Books — Service Design Case Study</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f0e0d;
+    --paper: #f5f2ec;
+    --accent: #e8521a;
+    --accent2: #1a4de8;
+    --mid: #6b6560;
+    --rule: #d4cfc7;
+    --highlight: #fff8e7;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { background:var(--paper); color:var(--ink); font-family:'DM Sans',sans-serif; font-weight:300; font-size:17px; line-height:1.7; overflow-x:hidden; }
+
+  nav { position:fixed; top:0; left:0; right:0; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:18px 48px; background:var(--paper); border-bottom:1px solid var(--rule); }
+  nav .logo { font-family:'Playfair Display',serif; font-weight:700; font-size:15px; letter-spacing:.06em; text-transform:uppercase; }
+  nav .byline { font-size:12px; color:var(--mid); letter-spacing:.08em; text-transform:uppercase; }
+
+  /* HERO */
+  .hero { min-height:100vh; display:grid; grid-template-columns:1fr 1fr; padding-top:70px; }
+  .hero-left { padding:80px 64px 80px 80px; display:flex; flex-direction:column; justify-content:center; border-right:1px solid var(--rule); }
+  .hero-tag { font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--accent); margin-bottom:32px; display:flex; align-items:center; gap:10px; }
+  .hero-tag::before { content:''; display:block; width:32px; height:1px; background:var(--accent); }
+  .hero h1 { font-family:'Playfair Display',serif; font-size:clamp(44px,5.5vw,76px); line-height:1.05; font-weight:900; margin-bottom:12px; }
+  .hero h1 em { font-style:italic; color:var(--accent); }
+  .hero-sub { font-size:20px; color:var(--mid); font-family:'Playfair Display',serif; font-style:italic; margin-bottom:48px; border-left:3px solid var(--accent2); padding-left:16px; }
+  .hero-meta { display:flex; gap:40px; flex-wrap:wrap; }
+  .hero-meta-item label { display:block; font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:var(--mid); margin-bottom:4px; }
+  .hero-meta-item span { font-weight:500; font-size:15px; }
+  .hero-right { display:grid; grid-template-rows:1fr 1fr; background:var(--ink); }
+  .hero-stat { display:flex; flex-direction:column; justify-content:center; padding:48px 64px; border-bottom:1px solid rgba(255,255,255,.1); color:white; }
+  .hero-stat .big { font-family:'Playfair Display',serif; font-size:72px; font-weight:900; line-height:1; color:var(--accent); }
+  .hero-stat p { font-size:15px; color:rgba(255,255,255,.6); margin-top:8px; }
+
+  /* SECTIONS */
+  section { padding:96px 80px; border-bottom:1px solid var(--rule); }
+  .section-label { font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:var(--accent); margin-bottom:20px; display:flex; align-items:center; gap:10px; }
+  .section-label::after { content:''; flex:1; height:1px; background:var(--rule); max-width:80px; }
+  h2 { font-family:'Playfair Display',serif; font-size:clamp(30px,4vw,50px); font-weight:700; line-height:1.1; margin-bottom:32px; }
+  h3 { font-family:'Playfair Display',serif; font-size:24px; font-weight:700; margin-bottom:14px; margin-top:44px; }
+  h3:first-of-type { margin-top:0; }
+  p { margin-bottom:18px; color:#2a2825; }
+  p:last-child { margin-bottom:0; }
+  .two-col { display:grid; grid-template-columns:1fr 1fr; gap:64px; align-items:start; }
+  .three-col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:40px; }
+
+  .pull-quote { margin:48px 0; padding:40px 48px; background:var(--ink); color:white; position:relative; }
+  .pull-quote::before { content:'\201C'; font-family:'Playfair Display',serif; font-size:120px; line-height:.7; color:var(--accent); opacity:.6; position:absolute; top:24px; left:32px; }
+  .pull-quote p { font-family:'Playfair Display',serif; font-size:22px; font-style:italic; color:white; padding-left:24px; position:relative; z-index:1; }
+
+  /* ACTORS */
+  .eco-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--rule); margin:48px 0; }
+  .eco-node { background:var(--paper); padding:28px 24px; }
+  .eco-node.center { background:var(--accent); color:white; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; min-height:160px; }
+  .eco-node.center h4 { color:white; font-size:20px; }
+  .eco-node.center p { color:rgba(255,255,255,.8); font-size:13px; }
+  .eco-node-type { font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:var(--mid); margin-bottom:8px; }
+  .eco-node h4 { font-weight:500; font-size:15px; margin-bottom:6px; }
+  .eco-node p { font-size:12px; color:var(--mid); margin:0; line-height:1.5; }
+
+  /* JOURNEY */
+  .journey-phases { display:flex; gap:0; margin:48px 0; border-top:1px solid var(--rule); border-bottom:1px solid var(--rule); }
+  .phase { flex:1; padding:28px 20px; border-right:1px solid var(--rule); border-top:4px solid var(--ink); }
+  .phase:last-child { border-right:none; }
+  .phase.active { border-top-color:var(--accent); background:var(--highlight); }
+  .phase-label { font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:var(--mid); margin-bottom:8px; }
+  .phase-name { font-weight:500; font-size:15px; margin-bottom:12px; }
+  .phase ul { padding-left:16px; font-size:13px; color:#3a3734; line-height:1.6; }
+  .phase .ch { font-size:11px; color:var(--mid); margin-top:12px; }
+  .phase .fp { font-size:11px; color:var(--accent); margin-top:4px; }
+
+  /* BLUEPRINT */
+  .blueprint { margin:48px 0; overflow-x:auto; }
+  .bp-table { width:100%; border-collapse:collapse; min-width:900px; }
+  .bp-table th { background:var(--ink); color:white; font-size:11px; letter-spacing:.14em; text-transform:uppercase; padding:14px 16px; text-align:left; font-weight:400; }
+  .bp-table th:first-child { background:var(--accent); }
+  .bp-table td { padding:14px 16px; font-size:13px; border-bottom:1px solid var(--rule); border-right:1px solid var(--rule); vertical-align:top; line-height:1.5; }
+  .bp-table td:first-child { font-size:10px; letter-spacing:.12em; text-transform:uppercase; font-weight:500; color:var(--mid); background:#f0ece4; width:130px; }
+  .bp-table tr:last-child td { border-bottom:none; }
+  .bp-table .hl { background:#fff8e7; }
+  .bp-row-front td:first-child { border-left:4px solid var(--accent); }
+  .bp-row-back td:first-child { border-left:4px solid var(--accent2); }
+  .bp-row-support td:first-child { border-left:4px solid #999; }
+  .bp-row-evidence td:first-child { border-left:4px solid #22aa66; }
+  .divider-row td { padding:6px 16px; font-size:11px; letter-spacing:.1em; text-transform:uppercase; }
+
+  /* INSIGHT CARDS */
+  .insight-cards { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1px; background:var(--rule); margin:48px 0; }
+  .insight-card { background:var(--paper); padding:32px 28px; }
+  .insight-num { font-family:'Playfair Display',serif; font-size:48px; font-weight:900; color:var(--rule); line-height:1; margin-bottom:8px; }
+  .insight-card h4 { font-weight:500; font-size:16px; margin-bottom:8px; }
+  .insight-card p { font-size:14px; color:var(--mid); margin:0; }
+
+  /* OPP GRID */
+  .opp-grid { display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--rule); margin:48px 0; }
+  .opp-card { background:var(--paper); padding:40px; }
+  .opp-card:nth-child(odd) { background:var(--ink); color:white; }
+  .opp-card:nth-child(odd) p { color:rgba(255,255,255,.65); }
+  .opp-card:nth-child(odd) h4 { color:white; }
+  .opp-tag { font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:var(--accent); margin-bottom:16px; }
+  .opp-card:nth-child(odd) .opp-tag { color:#f98d65; }
+  .opp-card h4 { font-weight:500; font-size:18px; margin-bottom:10px; }
+  .opp-card p { font-size:14px; line-height:1.6; margin:0; }
+
+  /* METRICS */
+  .metrics { display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid var(--rule); border-bottom:1px solid var(--rule); margin:48px 0; }
+  .metric { padding:48px 36px; border-right:1px solid var(--rule); }
+  .metric:last-child { border-right:none; }
+  .metric .num { font-family:'Playfair Display',serif; font-size:52px; font-weight:900; line-height:1; color:var(--accent); margin-bottom:8px; }
+  .metric .lbl { font-size:13px; color:var(--mid); line-height:1.4; }
+
+  /* LEARNINGS */
+  .learnings { display:grid; grid-template-columns:1fr 1fr; gap:48px; margin-top:48px; }
+  .learning { padding-left:20px; border-left:3px solid var(--accent); }
+  .learning h4 { font-weight:500; margin-bottom:8px; }
+  .learning p { font-size:14px; color:var(--mid); margin:0; }
+
+  /* DATA STATS */
+  .stat-row { display:flex; gap:0; margin:48px 0; border:1px solid var(--rule); }
+  .stat-box { flex:1; padding:36px 28px; border-right:1px solid var(--rule); text-align:center; }
+  .stat-box:last-child { border-right:none; }
+  .stat-box .n { font-family:'Playfair Display',serif; font-size:44px; font-weight:900; color:var(--accent); line-height:1; }
+  .stat-box .d { font-size:13px; color:var(--mid); margin-top:6px; }
+
+  footer { padding:48px 80px; display:flex; align-items:center; justify-content:space-between; border-top:1px solid var(--rule); background:var(--ink); color:white; }
+  footer .name { font-family:'Playfair Display',serif; font-size:24px; font-weight:700; }
+  footer p { font-size:13px; color:rgba(255,255,255,.5); margin:4px 0 0; }
+  footer .role { font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Bryan Watson</div>
+  <div class="byline">Service Design Case Study · Gauntlet Comic Books</div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-left">
+    <div class="hero-tag">Service Design Case Study</div>
+    <h1>Gauntlet<br><em>Comic</em><br>Books</h1>
+    <p class="hero-sub">Redesigning a local retailer's service model — from broken website to an omnichannel comic shopping experience.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><label>Role</label><span>UX/UI Designer & Researcher</span></div>
+      <div class="hero-meta-item"><label>Client</label><span>Gauntlet Comic Books, North Miami</span></div>
+      <div class="hero-meta-item"><label>Framework</label><span>Learn · Define · Design</span></div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-stat">
+      <div class="big">60+</div>
+      <p>survey responses collected across social media and Slack channels, revealing surprising truths about who actually reads comics</p>
+    </div>
+    <div class="hero-stat">
+      <div class="big">3×</div>
+      <p>critical service failure points mapped across the purchase journey — search, product discovery, and checkout — each requiring a distinct service response</p>
+    </div>
+  </div>
+</div>
+
+<!-- 1. SERVICE CHALLENGE -->
+<section>
+  <div class="section-label">01 — Service Challenge</div>
+  <div class="two-col">
+    <div>
+      <h2>A beloved local store with a broken digital service</h2>
+      <p>Gauntlet Comic Books is a North Miami retailer that has built a loyal in-store following among comic enthusiasts. But the store's digital presence — its website — was actively driving customers away. Sales and subscription goals were not being met, limiting revenue and growth potential.</p>
+      <p>The original brief asked for a website redesign. A service design lens asks a bigger question: <strong>why is the digital channel failing, and how does that failure ripple through the entire retail service — from publisher relationships to subscription fulfillment to customer loyalty?</strong></p>
+    </div>
+    <div>
+      <h3>From web redesign to service question</h3>
+      <p>Comic book retail is not just a transactional service. It involves recurring subscriptions (pull lists), pre-orders months in advance, physical inventory management, community building, and a passionate customer base with highly specific needs. The website wasn't just poorly designed — it was disconnected from the service the store actually provided.</p>
+      <div class="pull-quote" style="margin-top:32px;">
+        <p>Comic book sites have terrible customer service. The site doesn't tell me what's in stock, what's new, or how to subscribe.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. SERVICE ECOSYSTEM -->
+<section>
+  <div class="section-label">02 — Service Ecosystem</div>
+  <h2>Mapping all actors in the comic retail service</h2>
+  <p>Before designing a single screen, the team mapped every actor involved in delivering Gauntlet's retail service — from publishers and distributors to the end customer and the subscription system.</p>
+  <div class="eco-grid">
+    <div class="eco-node">
+      <div class="eco-node-type">End Customer</div>
+      <h4>Comic Book Reader</h4>
+      <p>Average age 35–44, nearly half female — a demographic broader than stereotypes suggest. Shops online (2 in 3 buy from online stores), prefers physical print, and values pre-order availability.</p>
+    </div>
+    <div class="eco-node">
+      <div class="eco-node-type">Retailer</div>
+      <h4>Gauntlet Comic Books</h4>
+      <p>Local North Miami retailer offering single issues, back-runs, subscriptions (pull lists), and merchandise. Has physical store and website; revenue depends on both channels.</p>
+    </div>
+    <div class="eco-node">
+      <div class="eco-node-type">Subscription Service</div>
+      <h4>Pull List / Pre-Order</h4>
+      <p>A recurring subscription model where customers reserve upcoming issues. Popular (16.7% of fans pre-order) but broken on the website — subscribing was one of the three failed user tasks.</p>
+    </div>
+    <div class="eco-node">
+      <div class="eco-node-type">Upstream</div>
+      <h4>Publishers & Distributors</h4>
+      <p>Marvel, DC, Image, and others release new issues weekly. Inventory availability and new release data must flow from distributor to retailer to website in near real-time.</p>
+    </div>
+    <div class="eco-node center">
+      <h4>The Service</h4>
+      <p>Gauntlet's Online Retail & Subscription Experience</p>
+    </div>
+    <div class="eco-node">
+      <div class="eco-node-type">Competition</div>
+      <h4>Amazon & Midtown Comics</h4>
+      <p>Amazon captures 43% of online comic purchases; Midtown Comics takes 11%. These are the default destinations when Gauntlet's service fails to deliver. Best-in-class (Comics Etc, Barnes & Noble) set the benchmark.</p>
+    </div>
+    <div class="eco-node">
+      <div class="eco-node-type">Community</div>
+      <h4>Hobbyist & Fan Networks</h4>
+      <p>Social media groups, local Slack channels, and fan communities. These are research channels and word-of-mouth drivers — currently underutilized by Gauntlet's digital service.</p>
+    </div>
+    <div class="eco-node">
+      <div class="eco-node-type">Physical Channel</div>
+      <h4>The Physical Store</h4>
+      <p>The origin of the business and its primary trust signal. But 60.7% of fans don't use reviews when choosing a comic — personal discovery and browsability matters more.</p>
+    </div>
+    <div class="eco-node">
+      <div class="eco-node-type">Digital Channel</div>
+      <h4>The Website</h4>
+      <p>The broken service touchpoint. No clear path, ineffective search, out-of-stock products surfacing in results, inconsistent CTAs, and no orientation for new visitors.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 3. RESEARCH -->
+<section>
+  <div class="section-label">03 — Research & Discovery</div>
+  <div class="two-col">
+    <div>
+      <h2>The most research-intensive phase of the project</h2>
+      <p>The team conducted a sweeping research effort across six methods: a UX audit of the existing site, a competitive audit (in and out of category), social media listening, a 60+ response survey, industry data analysis, and 1:1 user interviews with task completion testing.</p>
+      <p>The research revealed that the comic book customer is far more diverse than expected — and that the service gap wasn't a lack of demand, but a broken delivery mechanism.</p>
+    </div>
+    <div>
+      <div class="stat-row" style="margin-top:0;">
+        <div class="stat-box"><div class="n">2/3</div><div class="d">of fans buy from online stores — demand for digital retail is there</div></div>
+        <div class="stat-box"><div class="n">47%</div><div class="d">of comic book readers are female — wider than the market assumed</div></div>
+      </div>
+      <div class="stat-row" style="margin-top:1px;">
+        <div class="stat-box"><div class="n">35–44</div><div class="d">average reader age — not teenagers, but adults with disposable income</div></div>
+        <div class="stat-box"><div class="n">45%</div><div class="d">prefer physical print — the in-store product has enduring value</div></div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Three research-driven user segments</h3>
+  <div class="insight-cards">
+    <div class="insight-card">
+      <div class="insight-num">01</div>
+      <h4>The Series Collector</h4>
+      <p>Follows specific characters, writers, and publishers. Needs back-run availability, complete storyline bundles, and cross-over event information. Pre-ordering is critical to not miss issues.</p>
+    </div>
+    <div class="insight-card">
+      <div class="insight-num">02</div>
+      <h4>The Casual Browser</h4>
+      <p>Arrives at the site without a specific title in mind. Needs discoverability — new releases, trending titles, and curated entry points by genre, character, or publisher. Easily lost on the current site.</p>
+    </div>
+    <div class="insight-card">
+      <div class="insight-num">03</div>
+      <h4>The Merchandise & Gift Buyer</h4>
+      <p>Not primarily a reader — shops for related merchandise or gifts. Needs clear product categories, suggestions based on popular characters, and a frictionless checkout. Currently invisible on the site.</p>
+    </div>
+  </div>
+
+  <h3>What the UX audit revealed about service failure</h3>
+  <p>The UX audit of Gauntlet's existing site mapped specific failure points across three pages. These weren't just design problems — each represented a point where the service broke down entirely:</p>
+  <div class="two-col" style="margin-top:24px;">
+    <div>
+      <p><strong>Homepage:</strong> Products were buried beneath a large hero image of the store interior. The cart was unfindable. New releases — the most time-sensitive service value a comic retailer has — were absent from the main page entirely.</p>
+      <p><strong>Search Results:</strong> Items listed as out of stock appeared in results, wasting customer time and eroding trust. The faceted search was misaligned with the page layout, and navigation links failed to show the user's current location.</p>
+    </div>
+    <div>
+      <p><strong>Product Detail Page:</strong> Minimal product information, no peer reviews, no related merchandise suggestions, and misleading CTAs in a different color than the rest of the site. The page lacked personality — a critical failure for a product category driven by passion and fandom.</p>
+      <p><strong>Task testing:</strong> Users were asked to find a book, add it to the cart, and subscribe to a pull list. All three tasks were difficult or failed, with many abandoning the site mid-task to search elsewhere.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 4. CUSTOMER JOURNEY -->
+<section style="padding-left:0; padding-right:0;">
+  <div style="padding:0 80px;">
+    <div class="section-label">04 — Customer Journey</div>
+    <h2>Four stages, three major service failures</h2>
+    <p>The journey map — built from 1:1 interviews, survey data, and task testing — revealed that sentiment plummeted at every active stage of the service. Customers arrived with high expectations (Gauntlet's physical store reputation preceded it) and left increasingly frustrated.</p>
+  </div>
+  <div class="journey-phases">
+    <div class="phase">
+      <div class="phase-label">Phase 1</div>
+      <div class="phase-name">Discover & Arrive</div>
+      <ul>
+        <li>Hears about Gauntlet via community/word of mouth</li>
+        <li>Arrives on site expecting store-quality experience</li>
+        <li>Greeted by large store photo, no clear path</li>
+      </ul>
+      <div class="ch">Channel: Website</div>
+      <div style="font-size:11px; color:#22aa66; margin-top:4px;">😐 Hopeful but quickly confused</div>
+    </div>
+    <div class="phase active">
+      <div class="phase-label">Phase 2</div>
+      <div class="phase-name">Search</div>
+      <ul>
+        <li>Uses search bar — gets poor results</li>
+        <li>Tries faceted filter — misaligned layout</li>
+        <li>Out-of-stock items appear in results</li>
+        <li>Leaves site to Google what they need</li>
+      </ul>
+      <div class="ch">Channel: Website</div>
+      <div class="fp">★ Failure #1 — Search breaks the service</div>
+    </div>
+    <div class="phase active">
+      <div class="phase-label">Phase 3</div>
+      <div class="phase-name">Choose & Browse</div>
+      <ul>
+        <li>Finds a product (if still on site)</li>
+        <li>Product page has minimal info</li>
+        <li>No reviews, no related titles</li>
+        <li>Misleading CTA colors create doubt</li>
+      </ul>
+      <div class="ch">Channel: Website</div>
+      <div class="fp">★ Failure #2 — Product page fails to sell</div>
+    </div>
+    <div class="phase active">
+      <div class="phase-label">Phase 4</div>
+      <div class="phase-name">Buy / Subscribe</div>
+      <ul>
+        <li>Attempts checkout or pull list signup</li>
+        <li>5-step checkout — too many steps</li>
+        <li>No Apple Pay / PayPal support</li>
+        <li>Abandons — goes to Amazon or Midtown</li>
+      </ul>
+      <div class="ch">Channel: Website</div>
+      <div class="fp">★ Failure #3 — Checkout drives defection</div>
+    </div>
+    <div class="phase">
+      <div class="phase-label">Phase 5</div>
+      <div class="phase-name">Post-Purchase / Return</div>
+      <ul>
+        <li>If order completed: no related title suggestions</li>
+        <li>No notification for new issues in pull list</li>
+        <li>No re-engagement path back to site</li>
+      </ul>
+      <div class="ch">Channel: Email / Website</div>
+      <div style="font-size:11px; color:var(--mid); margin-top:4px;">Loyalty opportunity missed</div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. SERVICE BLUEPRINT -->
+<section>
+  <div class="section-label">05 — Service Blueprint</div>
+  <h2>What's happening behind every broken touchpoint</h2>
+  <p>The blueprint maps the frontstage experience against the backstage systems and support infrastructure that enable — or fail — the retail service. The pattern is consistent: the customer-facing failures are symptoms of deeper operational and technical gaps.</p>
+  <div style="display:flex; gap:32px; margin:32px 0; flex-wrap:wrap;">
+    <div style="display:flex; align-items:center; gap:10px; font-size:13px;"><div style="width:20px; height:4px; background:var(--accent);"></div>Frontstage (customer-visible)</div>
+    <div style="display:flex; align-items:center; gap:10px; font-size:13px;"><div style="width:20px; height:4px; background:var(--accent2);"></div>Backstage (staff/system)</div>
+    <div style="display:flex; align-items:center; gap:10px; font-size:13px;"><div style="width:20px; height:4px; background:#999;"></div>Support processes</div>
+    <div style="display:flex; align-items:center; gap:10px; font-size:13px;"><div style="width:20px; height:4px; background:#22aa66;"></div>Physical evidence</div>
+  </div>
+  <div class="blueprint">
+    <table class="bp-table">
+      <thead>
+        <tr>
+          <th>Layer</th>
+          <th>Discover</th>
+          <th>Search</th>
+          <th>Choose Product</th>
+          <th>Checkout / Subscribe</th>
+          <th>Post-Purchase</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="bp-row-evidence">
+          <td>Physical Evidence</td>
+          <td>Website homepage, store reputation</td>
+          <td>Search results page, faceted filters</td>
+          <td>Product detail page, images, CTA buttons</td>
+          <td>Cart, checkout steps, confirmation screen</td>
+          <td>Order email, pull list confirmation</td>
+        </tr>
+        <tr class="bp-row-front">
+          <td>Customer Actions</td>
+          <td>Arrives on site, scans homepage</td>
+          <td>Uses search bar and filters, browses results</td>
+          <td>Views product page, reads info, considers purchase</td>
+          <td>Adds to cart, attempts checkout or pull list signup</td>
+          <td>Waits for order or next issue; may not return</td>
+        </tr>
+        <tr class="bp-row-front">
+          <td>Frontstage (Digital)</td>
+          <td>Homepage displays hero image of store; no clear path, no new releases featured</td>
+          <td>Search returns out-of-stock items; faceted search misaligns layout; no autocomplete</td>
+          <td>Product page shows minimal info; no reviews; misleading CTA colors; no related titles</td>
+          <td>5-step checkout; no Apple/Google Pay; no guest checkout; pull list signup poorly signposted</td>
+          <td>No suggestion engine; no new issue alerts for pull list subscribers</td>
+        </tr>
+        <tr>
+          <td colspan="6" style="padding:6px 16px; background:#e8f0ff; font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--accent2); border-bottom:2px solid var(--accent2);">— Line of Visibility —</td>
+        </tr>
+        <tr class="bp-row-back">
+          <td>Backstage</td>
+          <td>No CMS editorial workflow for featuring new releases; homepage managed manually if at all</td>
+          <td>Search index not synced with live inventory; out-of-stock products not filtered from results</td>
+          <td>Product data entered manually; no review system integrated; related product logic absent</td>
+          <td>Checkout flow not optimized; no payment gateway supporting modern pay options; pull list managed off-site</td>
+          <td>No CRM or email automation; pull list is a manual process; no re-engagement triggers</td>
+        </tr>
+        <tr>
+          <td colspan="6" style="padding:6px 16px; background:#f0ece4; font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:#999; border-bottom:2px solid #999;">— Line of Internal Interaction —</td>
+        </tr>
+        <tr class="bp-row-support">
+          <td>Support Systems</td>
+          <td>No publisher/distributor API feeding new releases to site; CMS lacks editorial templating</td>
+          <td>No real-time inventory sync; e-commerce platform limitations; no search analytics</td>
+          <td>No product review platform; no recommendation engine; product data sourced manually from distributor sheets</td>
+          <td>Payment processor lacks modern wallet support; checkout built on legacy flow; pull list tracked in spreadsheet</td>
+          <td>No email marketing platform; no CRM; loyalty program absent</td>
+        </tr>
+        <tr class="bp-row-support">
+          <td>Failure Points</td>
+          <td class="hl">Customer can't determine what's new or in stock from homepage alone</td>
+          <td class="hl">Search returns unavailable products; customer leaves to find title on Amazon</td>
+          <td class="hl">Product page fails to differentiate from Amazon; no social proof; no upsell</td>
+          <td class="hl">Checkout friction drives defection to competing retailers at point of conversion</td>
+          <td class="hl">No mechanism to re-engage pull list subscribers or notify them of new issues</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 6. OPPORTUNITY AREAS -->
+<section style="padding:0;">
+  <div style="padding:96px 80px 48px;">
+    <div class="section-label">06 — Service Opportunity Areas</div>
+    <h2>Where the service needs to change</h2>
+    <p>The MVP prioritization session (value vs. effort chart) helped the team sequence opportunities. Service design reframes these as gaps across the full service system — not just features to add to a website.</p>
+  </div>
+  <div class="opp-grid">
+    <div class="opp-card">
+      <div class="opp-tag">Inventory & Discovery</div>
+      <h4>Real-time stock as a service signal</h4>
+      <p>Showing out-of-stock items in search results is not just a UI bug — it's a service failure that breaks trust and causes defection. Live inventory sync between the distributor feed and the website search index is the foundational fix before any design work matters.</p>
+    </div>
+    <div class="opp-card">
+      <div class="opp-tag">Subscription Service</div>
+      <h4>Pull list as a loyalty service, not a form</h4>
+      <p>16.7% of fans pre-order titles. The pull list is Gauntlet's strongest retention tool — recurring, habitual, and relationship-building. Redesigning it as a proactive subscription service (with notifications, new issue alerts, and storyline tracking) transforms it from a form to a service.</p>
+    </div>
+    <div class="opp-card">
+      <div class="opp-tag">Search & Navigation</div>
+      <h4>Multiple entry points for diverse readers</h4>
+      <p>The 47% female, 35–44 demographic shops differently than the stereotypical young male collector. Multiple search categories (publishers, characters, genre, writers, artists), autocomplete, and curated entry points serve the full breadth of the customer base — not just the core fan.</p>
+    </div>
+    <div class="opp-card">
+      <div class="opp-tag">Checkout & Conversion</div>
+      <h4>Streamlined checkout as competitive parity</h4>
+      <p>Amazon's 1-click advantage is a service benchmark. A progress bar, Apple Pay/Google Pay support, and the ability to buy directly from the product page — bypassing the cart entirely for single purchases — close the conversion gap with competing retailers.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 7. DESIGN DECISIONS -->
+<section>
+  <div class="section-label">07 — Design Decisions Through a Service Lens</div>
+  <h2>Why each design choice served the broader service</h2>
+  <div class="three-col" style="margin-top:48px;">
+    <div>
+      <div style="font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--accent); margin-bottom:12px;">Decision 01</div>
+      <h3 style="font-size:20px; margin-top:0;">Featured new releases on homepage</h3>
+      <p style="font-size:14px;">New issue Wednesday is the heartbeat of comic retail. Featuring new releases on the homepage aligns the digital service with the physical store's most important weekly event — giving the website a reason to be visited regularly, not just for one-time transactions.</p>
+      <p style="font-size:14px; color:var(--mid);">Service implication: increases return visits and subscription discoverability.</p>
+    </div>
+    <div>
+      <div style="font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--accent); margin-bottom:12px;">Decision 02</div>
+      <h3 style="font-size:20px; margin-top:0;">Subscribe button on every current title</h3>
+      <p style="font-size:14px;">Placing a subscribe-to-pull-list button on every active title card removes the service barrier between discovery and commitment. The customer doesn't need to navigate to a separate subscription page — the service wraps around their browsing behavior.</p>
+      <p style="font-size:14px; color:var(--mid);">Service implication: pull list conversion happens at the moment of interest, not at a later, lower-intent step.</p>
+    </div>
+    <div>
+      <div style="font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--accent); margin-bottom:12px;">Decision 03</div>
+      <h3 style="font-size:20px; margin-top:0;">Engage · Facilitate · Convert UX strategy</h3>
+      <p style="font-size:14px;">The three-pillar strategy — make it Fun, make it Easy, make it Read — is a service design principle, not just a visual direction. Engage means the service reflects the passion of the product. Facilitate means the service removes barriers. Convert means the service earns trust at checkout.</p>
+      <p style="font-size:14px; color:var(--mid);">Service implication: every design decision maps back to a service outcome, not just an aesthetic preference.</p>
+    </div>
+  </div>
+
+  <div style="border-top:1px solid var(--rule); margin-top:48px; padding-top:40px;">
+    <h3>The MVP session as service triage</h3>
+    <p>The value vs. effort chart — produced in a collaborative workshop — was a service prioritization exercise, not just a feature backlog. High-value, low-effort items like autocomplete search, a subscribe button on every title, and streamlined checkout addressed the three service failure points directly. High-value, high-effort items like animated hero transitions and a BuzzFeed-style quiz were deferred — important for the Engage pillar, but not the foundational service fixes needed first.</p>
+  </div>
+</section>
+
+<!-- 8. OUTCOMES -->
+<section style="padding-left:0; padding-right:0; padding-bottom:0;">
+  <div style="padding:0 80px 48px;">
+    <div class="section-label">08 — Outcomes & Service Impact</div>
+    <h2>Results across the service</h2>
+  </div>
+  <div class="metrics">
+    <div class="metric">
+      <div class="num">✓</div>
+      <div class="lbl">Proposed UX strategies tested well with users across all three primary tasks</div>
+    </div>
+    <div class="metric">
+      <div class="num">3</div>
+      <div class="lbl">Critical service failure points addressed through design and operational recommendations</div>
+    </div>
+    <div class="metric">
+      <div class="num">60+</div>
+      <div class="lbl">Survey responses informed service priorities — subscription, discoverability, and checkout</div>
+    </div>
+    <div class="metric">
+      <div class="num">↑</div>
+      <div class="lbl">Site engagement projected to increase through new release features and improved search</div>
+    </div>
+  </div>
+</section>
+
+<!-- 9. REFLECTIONS -->
+<section>
+  <div class="section-label">09 — Service Design Reflections</div>
+  <h2>What this project revealed about local retail service design</h2>
+  <div class="learnings">
+    <div class="learning">
+      <h4>Assumptions about who uses a service can undermine it</h4>
+      <p>47% of comic book readers are female, and the average age is 35–44. Designing a service around the assumed customer — young, male, deeply nerdy — systematically fails the majority. Research that challenges assumptions is a prerequisite for service design that works.</p>
+    </div>
+    <div class="learning">
+      <h4>Small retailers need service design more than anyone</h4>
+      <p>Unlike Amazon or Midtown Comics, Gauntlet has no algorithmic recommendation engine or logistics network. Its competitive advantage is community, expertise, and locality — but those values only translate online if the service is intentionally designed to carry them.</p>
+    </div>
+    <div class="learning">
+      <h4>The pull list is a service design problem, not a feature problem</h4>
+      <p>Adding a subscribe button was the design solution. The service design insight is bigger: subscriptions require notification systems, inventory predictability, publisher coordination, and customer trust — none of which the existing digital service supported.</p>
+    </div>
+    <div class="learning">
+      <h4>Connecting with niche communities accelerates research</h4>
+      <p>The perceived obstacle — "comic books are a small market, we won't find enough data" — was overcome by reaching into hobbyist Slack channels and fan groups. Service designers who go where users actually gather get richer, faster, and more honest data than those who wait for it to come to them.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div>
+    <div class="name">Bryan Watson</div>
+    <p class="role">UX/UI Product Designer & Researcher</p>
+    <p>Service Design Case Study · Gauntlet Comic Books</p>
+  </div>
+  <div style="text-align:right;">
+    <p style="font-size:12px; color:rgba(255,255,255,.4); text-transform:uppercase; letter-spacing:.1em;">Also in portfolio</p>
+    <p style="font-size:14px; color:rgba(255,255,255,.7); margin-top:6px;">Buy With Prime · Miami-Dade Transit Store<br>Amazon Encompass · Been There · Meta Flex Sim</p>
+  </div>
+</footer>
+</body>
+</html>
