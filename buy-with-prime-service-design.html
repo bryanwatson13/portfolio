@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buy With Prime — Service Design Case Study</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f0e0d;
+    --paper: #f5f2ec;
+    --accent: #e8521a;
+    --accent2: #1a4de8;
+    --mid: #6b6560;
+    --rule: #d4cfc7;
+    --highlight: #fff8e7;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    font-size: 17px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 48px;
+    background: var(--paper);
+    border-bottom: 1px solid var(--rule);
+  }
+  nav .logo {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700; font-size: 15px; letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+  nav .byline { font-size: 12px; color: var(--mid); letter-spacing: .08em; text-transform: uppercase; }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding-top: 70px;
+  }
+  .hero-left {
+    padding: 80px 64px 80px 80px;
+    display: flex; flex-direction: column; justify-content: center;
+    border-right: 1px solid var(--rule);
+  }
+  .hero-tag {
+    font-size: 11px; letter-spacing: .2em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 32px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .hero-tag::before { content: ''; display: block; width: 32px; height: 1px; background: var(--accent); }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(48px, 6vw, 80px);
+    line-height: 1.05;
+    font-weight: 900;
+    margin-bottom: 12px;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); }
+  .hero-sub {
+    font-size: 22px; color: var(--mid);
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    margin-bottom: 48px;
+    border-left: 3px solid var(--accent2);
+    padding-left: 16px;
+  }
+  .hero-meta { display: flex; gap: 40px; flex-wrap: wrap; }
+  .hero-meta-item label {
+    display: block; font-size: 10px; letter-spacing: .18em;
+    text-transform: uppercase; color: var(--mid); margin-bottom: 4px;
+  }
+  .hero-meta-item span { font-weight: 500; font-size: 15px; }
+
+  .hero-right {
+    display: grid; grid-template-rows: 1fr 1fr;
+    background: var(--ink);
+  }
+  .hero-stat {
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 48px 64px;
+    border-bottom: 1px solid rgba(255,255,255,.1);
+    color: white;
+  }
+  .hero-stat .big {
+    font-family: 'Playfair Display', serif;
+    font-size: 72px; font-weight: 900; line-height: 1;
+    color: var(--accent);
+  }
+  .hero-stat p { font-size: 15px; color: rgba(255,255,255,.6); margin-top: 8px; }
+
+  /* ── SECTIONS ── */
+  section { padding: 96px 80px; border-bottom: 1px solid var(--rule); }
+  section:last-of-type { border-bottom: none; }
+
+  .section-label {
+    font-size: 10px; letter-spacing: .22em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 20px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--rule); max-width: 80px; }
+
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(32px, 4vw, 52px);
+    font-weight: 700; line-height: 1.1;
+    margin-bottom: 32px;
+  }
+  h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px; font-weight: 700;
+    margin-bottom: 16px; margin-top: 48px;
+  }
+  h3:first-of-type { margin-top: 0; }
+  p { margin-bottom: 20px; color: #2a2825; }
+  p:last-child { margin-bottom: 0; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 40px; }
+
+  /* ── PULL QUOTE ── */
+  .pull-quote {
+    margin: 48px 0;
+    padding: 40px 48px;
+    background: var(--ink); color: white;
+    position: relative;
+  }
+  .pull-quote::before {
+    content: '\201C';
+    font-family: 'Playfair Display', serif;
+    font-size: 120px; line-height: .7;
+    color: var(--accent); opacity: .6;
+    position: absolute; top: 24px; left: 32px;
+  }
+  .pull-quote p {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px; font-style: italic;
+    color: white; padding-left: 24px; position: relative; z-index: 1;
+  }
+
+  /* ── ACTORS ── */
+  .actors { display: flex; gap: 0; margin: 48px 0; }
+  .actor {
+    flex: 1; padding: 32px 28px;
+    border-right: 1px solid var(--rule);
+    position: relative;
+  }
+  .actor:last-child { border-right: none; }
+  .actor-icon {
+    width: 48px; height: 48px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; margin-bottom: 16px;
+  }
+  .actor h4 { font-weight: 500; font-size: 15px; margin-bottom: 6px; }
+  .actor p { font-size: 13px; color: var(--mid); line-height: 1.5; margin: 0; }
+  .actor-border { border: 1px solid var(--rule); }
+
+  /* ── SERVICE BLUEPRINT ── */
+  .blueprint {
+    margin: 48px 0;
+    overflow-x: auto;
+  }
+  .bp-table {
+    width: 100%; border-collapse: collapse;
+    min-width: 900px;
+  }
+  .bp-table th {
+    background: var(--ink); color: white;
+    font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+    padding: 14px 20px; text-align: left; font-weight: 400;
+  }
+  .bp-table th:first-child { background: var(--accent); }
+  .bp-table td {
+    padding: 16px 20px; font-size: 13px;
+    border-bottom: 1px solid var(--rule);
+    border-right: 1px solid var(--rule);
+    vertical-align: top; line-height: 1.5;
+  }
+  .bp-table td:first-child {
+    font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+    font-weight: 500; color: var(--mid); background: #f0ece4;
+    width: 140px;
+  }
+  .bp-table tr:last-child td { border-bottom: none; }
+  .bp-table .highlight-cell { background: #fff8e7; }
+  .bp-row-front td:first-child { border-left: 4px solid var(--accent); }
+  .bp-row-back td:first-child { border-left: 4px solid var(--accent2); }
+  .bp-row-support td:first-child { border-left: 4px solid #999; }
+  .bp-row-evidence td:first-child { border-left: 4px solid #22aa66; }
+
+  /* ── LINE OF VISIBILITY ── */
+  .lov {
+    display: flex; align-items: center; gap: 16px;
+    margin: 32px 0 0;
+    padding: 12px 20px;
+  }
+  .lov-line { flex: 1; height: 2px; }
+  .lov span { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--mid); white-space: nowrap; }
+  .lov-front { background: var(--accent); }
+  .lov-back { background: var(--accent2); }
+  .lov-support { background: #999; }
+
+  /* ── JOURNEY MAP ── */
+  .journey { margin: 48px 0; }
+  .journey-phases { display: flex; gap: 0; }
+  .phase {
+    flex: 1; padding: 28px 20px;
+    border-right: 1px solid var(--rule);
+    border-top: 4px solid var(--ink);
+  }
+  .phase:last-child { border-right: none; }
+  .phase.active { border-top-color: var(--accent); background: var(--highlight); }
+  .phase-label {
+    font-size: 10px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--mid); margin-bottom: 8px;
+  }
+  .phase-name { font-weight: 500; font-size: 15px; margin-bottom: 12px; }
+  .phase ul { padding-left: 16px; font-size: 13px; color: #3a3734; line-height: 1.6; }
+
+  /* emotion bar */
+  .emotion-bar { display: flex; gap: 0; margin: 24px 0 8px; }
+  .emotion-phase {
+    flex: 1; height: 8px;
+  }
+  .emotion-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--mid); }
+
+  /* ── INSIGHT CARDS ── */
+  .insight-cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--rule); margin: 48px 0; }
+  .insight-card {
+    background: var(--paper); padding: 32px 28px;
+  }
+  .insight-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 48px; font-weight: 900; color: var(--rule);
+    line-height: 1; margin-bottom: 8px;
+  }
+  .insight-card h4 { font-weight: 500; font-size: 16px; margin-bottom: 8px; }
+  .insight-card p { font-size: 14px; color: var(--mid); margin: 0; }
+
+  /* ── OPPORTUNITY AREAS ── */
+  .opp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--rule); margin: 48px 0; }
+  .opp-card { background: var(--paper); padding: 40px; }
+  .opp-card:nth-child(odd) { background: var(--ink); color: white; }
+  .opp-card:nth-child(odd) p { color: rgba(255,255,255,.65); }
+  .opp-card:nth-child(odd) h4 { color: white; }
+  .opp-tag {
+    font-size: 10px; letter-spacing: .2em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 16px;
+  }
+  .opp-card:nth-child(odd) .opp-tag { color: #f98d65; }
+  .opp-card h4 { font-weight: 500; font-size: 18px; margin-bottom: 10px; }
+  .opp-card p { font-size: 14px; line-height: 1.6; margin: 0; }
+
+  /* ── ECOSYSTEM MAP ── */
+  .eco-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--rule); margin: 48px 0; }
+  .eco-node { background: var(--paper); padding: 28px 24px; }
+  .eco-node.center {
+    background: var(--accent); color: white;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    text-align: center; min-height: 160px;
+  }
+  .eco-node.center h4 { color: white; font-size: 20px; }
+  .eco-node.center p { color: rgba(255,255,255,.8); font-size: 13px; }
+  .eco-node-type {
+    font-size: 10px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--mid); margin-bottom: 8px;
+  }
+  .eco-node h4 { font-weight: 500; font-size: 15px; margin-bottom: 6px; }
+  .eco-node p { font-size: 12px; color: var(--mid); margin: 0; line-height: 1.5; }
+
+  /* ── METRICS ── */
+  .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; }
+  .metric { padding: 48px 40px; border-right: 1px solid var(--rule); }
+  .metric:last-child { border-right: none; }
+  .metric .num {
+    font-family: 'Playfair Display', serif;
+    font-size: 56px; font-weight: 900; line-height: 1;
+    color: var(--accent); margin-bottom: 8px;
+  }
+  .metric .label { font-size: 13px; color: var(--mid); line-height: 1.4; }
+
+  /* ── LEARNINGS ── */
+  .learnings { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; margin-top: 48px; }
+  .learning { padding-left: 20px; border-left: 3px solid var(--accent); }
+  .learning h4 { font-weight: 500; margin-bottom: 8px; }
+  .learning p { font-size: 14px; color: var(--mid); margin: 0; }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 48px 80px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-top: 1px solid var(--rule);
+    background: var(--ink); color: white;
+  }
+  footer .name {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px; font-weight: 700;
+  }
+  footer p { font-size: 13px; color: rgba(255,255,255,.5); margin: 4px 0 0; }
+  footer .role { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+
+  /* ── DIVIDER ── */
+  .rule { border: none; border-top: 1px solid var(--rule); margin: 40px 0; }
+
+  /* ── PRINT ── */
+  @media print {
+    nav { display: none; }
+    section { page-break-inside: avoid; }
+    .hero { min-height: auto; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Bryan Watson</div>
+  <div class="byline">Service Design Case Study · Buy With Prime</div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-left">
+    <div class="hero-tag">Service Design Case Study</div>
+    <h1>Buy With<br><em>Prime</em><br>Locker<br>Pick-Up</h1>
+    <p class="hero-sub">Reimagining last-mile delivery as an end-to-end service ecosystem — not just a checkout feature.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <label>Role</label>
+        <span>UX/UI Designer & Researcher</span>
+      </div>
+      <div class="hero-meta-item">
+        <label>Client</label>
+        <span>Amazon Buy with Prime</span>
+      </div>
+      <div class="hero-meta-item">
+        <label>Scope</label>
+        <span>Discovery → Delivery</span>
+      </div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-stat">
+      <div class="big">3</div>
+      <p>distinct user motivations uncovered — convenience, security, and anonymity — each requiring a different service response</p>
+    </div>
+    <div class="hero-stat">
+      <div class="big">↑</div>
+      <p>Purchase conversion rates increased for customers without single-family home addresses after locker pick-up launched</p>
+    </div>
+  </div>
+</div>
+
+<!-- 1. SERVICE CHALLENGE -->
+<section>
+  <div class="section-label">01 — Service Challenge</div>
+  <div class="two-col">
+    <div>
+      <h2>A delivery system built for one type of customer</h2>
+      <p>Amazon's Buy with Prime promises seamless shopping across third-party merchants. But the promise breaks the moment a customer doesn't live in a single-family home. Apartment dwellers, students, and urban residents face a structural gap: they cannot reliably receive packages at their front door.</p>
+      <p>This wasn't just a UX problem. It was a service gap that touched multiple actors, backstage systems, physical infrastructure, and partner relationships — all of which needed to be understood holistically before any screen was designed.</p>
+    </div>
+    <div>
+      <h3>From product feature to service question</h3>
+      <p>The original brief asked for a locker pick-up <em>feature</em>. A service design lens reframes this: <strong>How might we design a pick-up service that reliably serves customers across diverse living situations, through every touchpoint — digital and physical?</strong></p>
+      <div class="pull-quote" style="margin-top: 32px;">
+        <p>The screen is only the last 10% of the experience. The other 90% lives in logistics, partner agreements, locker hardware, and customer trust.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. SERVICE ECOSYSTEM -->
+<section>
+  <div class="section-label">02 — Service Ecosystem</div>
+  <h2>Mapping the actors & relationships</h2>
+  <p>Before defining any solution, the team mapped every actor involved in delivering a successful locker pick-up experience — from the merchant on Kitzy.com to the Bluetooth hardware inside the Amazon Hub.</p>
+
+  <div class="eco-grid">
+    <div class="eco-node">
+      <div class="eco-node-type">End User</div>
+      <h4>Buy with Prime Customer</h4>
+      <p>Urban/apartment resident who cannot receive home delivery reliably. Has Prime account, shops third-party merchants.</p>
+    </div>
+    <div class="eco-node">
+      <div class="eco-node-type">Platform</div>
+      <h4>Buy with Prime</h4>
+      <p>Amazon's service enabling Prime benefits (shipping, payments) on external merchant sites.</p>
+    </div>
+    <div class="eco-node">
+      <div class="eco-node-type">Third-Party Merchant</div>
+      <h4>e.g. Kitzy.com</h4>
+      <p>Independent retailer using Buy with Prime to offer Prime checkout. Has no control over fulfillment routing.</p>
+    </div>
+    <div class="eco-node">
+      <div class="eco-node-type">Physical Partner</div>
+      <h4>Amazon Hub Locker</h4>
+      <p>Physical locker infrastructure in retail locations. Bluetooth-enabled, app-connected. Hosts "Katie," "Evan," and other named units.</p>
+    </div>
+    <div class="eco-node center">
+      <h4>The Service</h4>
+      <p>Locker Pick-Up via Buy with Prime</p>
+    </div>
+    <div class="eco-node">
+      <div class="eco-node-type">Fulfillment</div>
+      <h4>Amazon Logistics / Flex</h4>
+      <p>Delivery drivers using the Flex app to deposit packages into correct lockers. Triggers customer notification.</p>
+    </div>
+    <div class="eco-node">
+      <div class="eco-node-type">Host Location</div>
+      <h4>Retail / Amazon Go</h4>
+      <p>Physical spaces housing lockers. Holiday hours, access restrictions, and lobby placement affect customer experience.</p>
+    </div>
+    <div class="eco-node">
+      <div class="eco-node-type">Support</div>
+      <h4>Amazon Customer Service</h4>
+      <p>Handles failed pick-ups, incorrect items, and locker access failures. A critical recovery touchpoint.</p>
+    </div>
+    <div class="eco-node">
+      <div class="eco-node-type">Technology</div>
+      <h4>Google Maps API</h4>
+      <p>Powers locker search and "View location in maps" — a third-party dependency in the pick-up flow.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 3. USER RESEARCH -->
+<section>
+  <div class="section-label">03 — Research & Discovery</div>
+  <div class="two-col">
+    <div>
+      <h2>Listening before designing</h2>
+      <p>Research drew on competitive auditing (Amazon's own non-Buy with Prime locker flow, Target, Walmart) and social listening. The goal was to understand not just <em>what</em> users wanted, but <em>why</em> they wanted it — which revealed three distinct motivational segments.</p>
+      <p>Competitors audited included Amazon's native locker flow, Target Drive Up, and Walmart Pickup — all services with more mature pick-up infrastructure to learn from.</p>
+    </div>
+    <div>
+      <h3>Three motivations. Three service needs.</h3>
+      <div class="insight-cards" style="margin: 0; grid-template-columns: 1fr;">
+        <div class="insight-card" style="border: 1px solid var(--rule); margin-bottom: 1px;">
+          <div class="insight-num">01</div>
+          <h4>Convenience-Driven</h4>
+          <p>"I pick it up while running errands." These users treat the locker as a flexible delivery hub woven into daily routines — not a workaround.</p>
+        </div>
+        <div class="insight-card" style="border: 1px solid var(--rule); margin-bottom: 1px;">
+          <div class="insight-num">02</div>
+          <h4>Security-Driven</h4>
+          <p>"Package theft is a real problem where I live." These users choose lockers as a safer alternative to porch delivery — trust and reliability are paramount.</p>
+        </div>
+        <div class="insight-card" style="border: 1px solid var(--rule);">
+          <div class="insight-num">03</div>
+          <h4>Privacy-Driven</h4>
+          <p>"I prefer the anonymity." These users actively choose not to have packages tied to a home address — discretion is the service value, not just convenience.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. CUSTOMER JOURNEY MAP -->
+<section style="padding-left: 0; padding-right: 0;">
+  <div style="padding: 0 80px;">
+    <div class="section-label">04 — Customer Journey</div>
+    <h2>The end-to-end experience across all touchpoints</h2>
+    <p>A service design perspective maps not just the digital screens, but the complete arc of the customer's interaction — from the moment they discover a product to the moment they walk away from the locker.</p>
+  </div>
+
+  <!-- Emotion bar -->
+  <div style="padding: 32px 80px 0;">
+    <div style="font-size: 11px; letter-spacing:.14em; text-transform:uppercase; color:var(--mid); margin-bottom: 8px;">Customer Sentiment Across Journey</div>
+    <div class="emotion-bar">
+      <div class="emotion-phase" style="background: #f0ece4; border-top: 4px solid #c2b9a8;"></div>
+      <div class="emotion-phase" style="background: #fff8e7; border-top: 4px solid #e8c855;"></div>
+      <div class="emotion-phase" style="background: #fff3ee; border-top: 4px solid var(--accent);"></div>
+      <div class="emotion-phase" style="background: #e8f5ee; border-top: 4px solid #22aa66;"></div>
+      <div class="emotion-phase" style="background: #eef3ff; border-top: 4px solid var(--accent2);"></div>
+    </div>
+    <div class="emotion-labels">
+      <span>Neutral</span><span>Curious</span><span>Uncertain</span><span>Relieved</span><span>Satisfied</span>
+    </div>
+  </div>
+
+  <div class="journey-phases" style="margin-top: 24px; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);">
+    <div class="phase" style="border-top: none; border-left: 0;">
+      <div class="phase-label">Phase 1</div>
+      <div class="phase-name">Discover & Browse</div>
+      <ul>
+        <li>Lands on Kitzy.com</li>
+        <li>Sees "Buy with Prime" button</li>
+        <li>Reads Prime delivery promise</li>
+      </ul>
+      <div style="margin-top: 16px; font-size: 12px; color: var(--mid);">Channel: Web (third-party merchant)</div>
+    </div>
+    <div class="phase active">
+      <div class="phase-label">Phase 2</div>
+      <div class="phase-name">Choose Delivery Method</div>
+      <ul>
+        <li>Sees "See nearby pickup locations" option at checkout</li>
+        <li>Evaluates locker vs. home delivery</li>
+        <li>Uncertain about process</li>
+      </ul>
+      <div style="margin-top: 16px; font-size: 12px; color: var(--accent);">★ Key design moment</div>
+    </div>
+    <div class="phase active">
+      <div class="phase-label">Phase 3</div>
+      <div class="phase-name">Select a Locker</div>
+      <ul>
+        <li>Searches by address/zip</li>
+        <li>Reviews hours & instructions</li>
+        <li>Exits to Google Maps to verify</li>
+        <li>Returns to confirm</li>
+      </ul>
+      <div style="margin-top: 16px; font-size: 12px; color: var(--accent);">★ Highest friction point</div>
+    </div>
+    <div class="phase">
+      <div class="phase-label">Phase 4</div>
+      <div class="phase-name">Wait & Receive Notification</div>
+      <ul>
+        <li>Receives confirmation email</li>
+        <li>Gets "ready for pickup" notification</li>
+        <li>Plans trip to locker</li>
+      </ul>
+      <div style="margin-top: 16px; font-size: 12px; color: var(--mid);">Channel: Email / Push</div>
+    </div>
+    <div class="phase">
+      <div class="phase-label">Phase 5</div>
+      <div class="phase-name">Physical Pick-Up</div>
+      <ul>
+        <li>Navigates to locker location</li>
+        <li>Opens via Bluetooth / code</li>
+        <li>Verifies item & closes locker</li>
+        <li>Receives digital receipt</li>
+      </ul>
+      <div style="margin-top: 16px; font-size: 12px; color: var(--mid);">Channel: Physical + App</div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. SERVICE BLUEPRINT -->
+<section>
+  <div class="section-label">05 — Service Blueprint</div>
+  <h2>Frontstage, backstage & support systems</h2>
+  <p>The service blueprint reveals the full operational complexity behind the customer-facing experience. Three lines of visibility separate what customers see from what enables the service.</p>
+
+  <div style="display: flex; gap: 32px; margin: 32px 0; flex-wrap: wrap;">
+    <div style="display: flex; align-items: center; gap: 10px; font-size: 13px;"><div style="width: 20px; height: 4px; background: var(--accent);"></div> Frontstage (customer-visible)</div>
+    <div style="display: flex; align-items: center; gap: 10px; font-size: 13px;"><div style="width: 20px; height: 4px; background: var(--accent2);"></div> Backstage (staff/system actions)</div>
+    <div style="display: flex; align-items: center; gap: 10px; font-size: 13px;"><div style="width: 20px; height: 4px; background: #999;"></div> Support processes</div>
+    <div style="display: flex; align-items: center; gap: 10px; font-size: 13px;"><div style="width: 20px; height: 4px; background: #22aa66;"></div> Physical evidence</div>
+  </div>
+
+  <div class="blueprint">
+    <table class="bp-table">
+      <thead>
+        <tr>
+          <th>Layer</th>
+          <th>Discover & Choose</th>
+          <th>Select Locker</th>
+          <th>Order Placed</th>
+          <th>Fulfillment</th>
+          <th>Pick-Up</th>
+          <th>Post Pick-Up</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="bp-row-evidence">
+          <td>Physical Evidence</td>
+          <td>Merchant website, Buy with Prime badge</td>
+          <td>Map UI, locker listing cards</td>
+          <td>Order confirmation screen, email</td>
+          <td>Push notification, "ready" email</td>
+          <td>Locker unit, location signage, locker door</td>
+          <td>Digital receipt, return label (if needed)</td>
+        </tr>
+        <tr class="bp-row-front">
+          <td>Customer Actions</td>
+          <td>Browses product, clicks "Buy with Prime"</td>
+          <td>Searches lockers, reads instructions, exits to Maps</td>
+          <td>Confirms order, selects locker as address</td>
+          <td>Waits; checks tracking</td>
+          <td>Navigates to locker, opens door, retrieves item</td>
+          <td>Reviews order, contacts support if needed</td>
+        </tr>
+        <tr class="bp-row-front">
+          <td>Frontstage (Digital)</td>
+          <td>Merchant site displays Buy with Prime CTA</td>
+          <td>Locker search UI, location details sheet, map link</td>
+          <td>Amazon checkout processes order</td>
+          <td>Tracking page, notification system</td>
+          <td>Locker access code or Bluetooth unlock UI</td>
+          <td>Receipts, support chat/link</td>
+        </tr>
+        <tr>
+          <td colspan="7" style="padding: 6px 20px; background: #e8f0ff; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent2); border-bottom: 2px solid var(--accent2);">— Line of Visibility —</td>
+        </tr>
+        <tr class="bp-row-back">
+          <td>Backstage (Amazon)</td>
+          <td>Buy with Prime API integration with merchant</td>
+          <td>Locker inventory/availability system, geo-routing</td>
+          <td>Order routing to nearest fulfillment center</td>
+          <td>Flex app assigns driver; Bluetooth signal sent to locker</td>
+          <td>Locker logs access event; notifies system of successful retrieval</td>
+          <td>Return routing, satisfaction survey trigger</td>
+        </tr>
+        <tr>
+          <td colspan="7" style="padding: 6px 20px; background: #f0ece4; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: #999; border-bottom: 2px solid #999;">— Line of Internal Interaction —</td>
+        </tr>
+        <tr class="bp-row-support">
+          <td>Support Systems</td>
+          <td>Merchant onboarding agreement, API docs</td>
+          <td>Google Maps API, locker database, accessibility data</td>
+          <td>Prime payment processing, fraud checks</td>
+          <td>Amazon logistics network, Flex driver app</td>
+          <td>Locker hardware (Bluetooth), host location facility management</td>
+          <td>Customer service CRM, returns logistics</td>
+        </tr>
+        <tr class="bp-row-support">
+          <td>Failure Points</td>
+          <td class="highlight-cell">Merchant hasn't enabled locker option in their Buy with Prime setup</td>
+          <td class="highlight-cell">Locker shown as available but full; maps link breaks the flow</td>
+          <td class="highlight-cell">Locker address not properly routed by fulfillment system</td>
+          <td class="highlight-cell">Driver deposits to wrong locker; notification not sent</td>
+          <td class="highlight-cell">Locker offline; location closed (holiday hours); wrong item</td>
+          <td class="highlight-cell">Customer unaware of return process; no direct locker support path</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 6. OPPORTUNITY AREAS -->
+<section style="padding: 0;">
+  <div style="padding: 96px 80px 48px;">
+    <div class="section-label">06 — Opportunity Areas</div>
+    <h2>Where the service can be strengthened</h2>
+    <p>The service blueprint reveals gaps that screen design alone cannot solve. These opportunity areas span digital, operational, and partnership layers.</p>
+  </div>
+
+  <div class="opp-grid">
+    <div class="opp-card">
+      <div class="opp-tag">Digital Touchpoint</div>
+      <h4>Reduce locker selection friction</h4>
+      <p>Users exit to Google Maps mid-flow to verify location details — a trust gap. Embedding richer location data (photos, lobby instructions, real-time availability) directly in the pick-up UI keeps users in-flow and builds confidence before committing.</p>
+    </div>
+    <div class="opp-card">
+      <div class="opp-tag">Backstage Operation</div>
+      <h4>Real-time locker availability sync</h4>
+      <p>If a locker is shown as available but is actually full, the entire service fails at the physical touchpoint. A live inventory sync between locker hardware and the selection UI would prevent misdirected orders and eliminate a critical failure point.</p>
+    </div>
+    <div class="opp-card">
+      <div class="opp-tag">Partner & Physical Layer</div>
+      <h4>Host location communication standards</h4>
+      <p>Locker access hours differ from host location hours (Amazon Go, retail partners). Holiday closures create abandoned pick-ups. Standardizing how hours are surfaced — and proactively notifying customers of restrictions — would reduce physical-layer failures.</p>
+    </div>
+    <div class="opp-card">
+      <div class="opp-tag">Notification & Recovery</div>
+      <h4>Proactive failure recovery journeys</h4>
+      <p>When a pick-up fails (wrong item, offline locker, expired window), there is no clear recovery path in the service. A dedicated recovery flow — in-app and via notification — would turn a service failure into a trust-building moment.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 7. DESIGN DECISIONS -->
+<section>
+  <div class="section-label">07 — Design Decisions Through a Service Lens</div>
+  <h2>Why each design choice served the broader service</h2>
+  <p>The UX decisions in this project weren't just about screen usability — each was a response to a service-level challenge revealed through the blueprint and journey mapping.</p>
+
+  <div class="three-col" style="margin-top: 48px;">
+    <div>
+      <div style="font-size: 11px; letter-spacing:.18em; text-transform:uppercase; color:var(--accent); margin-bottom: 12px;">Decision 01</div>
+      <h3 style="font-size: 20px; margin-top: 0;">Address selection as the ingress point</h3>
+      <p style="font-size: 14px;">Rather than a separate "locker mode," introducing pick-up through the existing address selection screen kept the service model familiar. Users understand "where do you want it sent?" — this reframes the locker as just another valid address, reducing cognitive overhead.</p>
+      <p style="font-size: 14px; color: var(--mid);">Service implication: fewer customers drop off due to an unfamiliar checkout paradigm.</p>
+    </div>
+    <div>
+      <div style="font-size: 11px; letter-spacing:.18em; text-transform:uppercase; color:var(--accent); margin-bottom: 12px;">Decision 02</div>
+      <h3 style="font-size: 20px; margin-top: 0;">Locker detail sheets with instructions</h3>
+      <p style="font-size: 14px;">Physical instructions ("find the locker in the entry vestibule") were surfaced before the user committed to a location — bridging the digital-to-physical gap. This pre-arrival context reduces locker-floor confusion and failed pick-ups.</p>
+      <p style="font-size: 14px; color: var(--mid);">Service implication: reduces calls to customer support for "I can't find the locker."</p>
+    </div>
+    <div>
+      <div style="font-size: 11px; letter-spacing:.18em; text-transform:uppercase; color:var(--accent); margin-bottom: 12px;">Decision 03</div>
+      <h3 style="font-size: 20px; margin-top: 0;">Accessibility filtering (wheelchair icon)</h3>
+      <p style="font-size: 14px;">The accessibility filter on locker search reflects a service commitment to inclusivity. Locker placement within host locations varies — embedding accessibility data at selection time ensures the physical environment matches the digital promise.</p>
+      <p style="font-size: 14px; color: var(--mid);">Service implication: the service works for customers who need physical accessibility accommodations.</p>
+    </div>
+  </div>
+
+  <hr class="rule" style="margin-top: 48px;">
+
+  <h3>Design iterations as service hypotheses</h3>
+  <p>Multiple design directions were tested — card-based vs. link-based locker lists, map-first vs. list-first layouts, expanded detail sheets vs. inline snippets. Each test was not just a usability test but a service experiment: <em>which design reduces the likelihood of a failed pick-up?</em></p>
+  <p>The recommended ingress (through address selection, not a separate flow) emerged as the design that best served the three user motivations — convenience, security, and privacy — while aligning with backstage fulfillment systems that already route by address.</p>
+</section>
+
+<!-- 8. OUTCOMES -->
+<section style="padding-left: 0; padding-right: 0; padding-bottom: 0;">
+  <div style="padding: 0 80px 48px;">
+    <div class="section-label">08 — Outcomes & Service Impact</div>
+    <h2>Results across the service system</h2>
+  </div>
+  <div class="metrics" style="border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);">
+    <div class="metric">
+      <div class="num">↑</div>
+      <div class="label">Purchase conversion among customers not living in single-family homes</div>
+    </div>
+    <div class="metric">
+      <div class="num">↑</div>
+      <div class="label">User satisfaction scores, per customer support feedback post-launch</div>
+    </div>
+    <div class="metric">
+      <div class="num">3×</div>
+      <div class="label">Distinct customer segments now served by a single, coherent service model</div>
+    </div>
+    <div class="metric">
+      <div class="num">↓</div>
+      <div class="label">Delivery failure rate for customers previously unable to receive home delivery</div>
+    </div>
+  </div>
+</section>
+
+<!-- 9. REFLECTIONS -->
+<section>
+  <div class="section-label">09 — Service Design Reflections</div>
+  <h2>What this project taught me about designing services</h2>
+
+  <div class="learnings">
+    <div class="learning">
+      <h4>Constraints exist in the backstage, not just the UI</h4>
+      <p>The biggest design decisions weren't about screens — they were about what backstage systems could support. Engineering limitations shaped the ingress point. A service designer must understand and design within the full operational system.</p>
+    </div>
+    <div class="learning">
+      <h4>Physical evidence is a design material</h4>
+      <p>The locker's physical location within a store, its signage, its hours — these are service design materials just as much as any UI component. The locker detail sheet in the app was a bridge between the digital interface and the physical environment.</p>
+    </div>
+    <div class="learning">
+      <h4>Different motivations need different service emphases</h4>
+      <p>Convenience, security, and privacy users share the same flow but need different assurances at different points. A service design approach surfaces these needs early, so the UI and operational layers can be calibrated accordingly.</p>
+    </div>
+    <div class="learning">
+      <h4>Recovery journeys are part of the service design</h4>
+      <p>A locker pick-up will sometimes fail. The absence of a clear recovery path is itself a design decision — a bad one. Future iterations should map and design failure recovery as a first-class part of the service.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="name">Bryan Watson</div>
+    <p class="role">UX/UI Product Designer & Researcher</p>
+    <p style="margin-top: 8px;">Service Design Case Study · Buy With Prime Locker Pick-Up</p>
+  </div>
+  <div style="text-align: right;">
+    <p style="font-size: 12px; color: rgba(255,255,255,.4); text-transform: uppercase; letter-spacing: .1em;">Also in portfolio</p>
+    <p style="font-size: 14px; color: rgba(255,255,255,.7); margin-top: 6px;">Amazon Encompass · Been There<br>Gauntlet Comic Books · Meta Flex Sim<br>Miami-Dade County Transit Store</p>
+  </div>
+</footer>
+
+</body>
+</html>
